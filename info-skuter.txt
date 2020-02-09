@@ -1,0 +1,71 @@
+
+Założenia:
+- zwiększenie gazu zwiększa częstotliwość podawaną na silnik ale nie przekraczając max poślizgu (różnicy pomiędzy częstotl. podawaną a osiągniętą przez silnik)
+- zwiększenie gazu zwiększa limit max. prądu podawanego na silnik ale nie oznacza bezpośrednio zwieszenia tego prądu
+- prąd jest zwiększany proporcjonalnie do poślizgu czyli im bardziej silnik się spóźnia tym więcej go trzeba podciągnąć
+- przy większych prędkościach (więcej gazu) prąd wymuszany przez poślizg będzie więc większy
+- minimalna częstotl. podawana na silnik to 10Hz, w tym zakresie zwiększanie gazu zwiększa proporcjonalnie prąd (faza łagodnego rozpędu z możliwością przyblokowania koła)
+- właściwy zakres częstotl. jest od 10Hz do 80Hz gdzie utrzymywany jest automatycznie prąd i poślizg
+- program dąży do utrzymania zadanego minimalnego prądu ale w zależności od poślizgu zwiększa go proporcjonalnie
+- program dąży do utrzymania zadanej manetką prędkości i dochodzi do niej stopniowo uwzlędniając dopuszczalny poślizg
+- enkoder kanał A i B 100 imp/obrót ale timer zlicza 400 imp/obrót (zbocze R i F obu sygnałów)
+- enkoder podłączony do timera w trybie Encoder
+- minimalna prędkość silnika 10Hz, maksymalna 80Hz
+- generowanie sinusoidy ze 144 elementów w odstępach 10us może być zmieniany PWM
+
+Główne prędkości:
+- prędkość odczytywana z zadajnika (throttle)
+- prędkość podawana na silnik (motor), prędkość wirującego pola magnetycznego
+- prędkość odczytywana przez enkoder (encoder), wylicza poślizg silnika
+
+najważniejsze zmienne:
+- select_period - prędkość zadana
+- sin_period - prędkość przekazana
+- hall_period_value - prędkość osiągnięta
+- MAX_PERIOD_PERCENT_DIFF - maksymalna dozwolona różnica prędkości przekazanej i osiągniętej
+
+Zasoby v1:
+TIM1 PA8 enkoder prędkości silnika CH1
+TIM1 PA9 enkoder prędkości silnika CH2
+TIM2 generacja sinusoid - updatowanie PWM co 10us
+TIM3 CH1 PA6 - PWM CH1 IGBT górny żółty
+TIM3 CH2 PA7 - PWM CH2 IGBT dolny brązowy
+TIM3 CH3 PB0 - PWM CH3 IGBT górny zielony
+TIM3 CH4 PB1 - PWM CH4 IGBT dolny fioletowy
+TIM4 CH1 PB6 - PWM CH5 IGBT górny pomarańczowy
+TIM4 CH2 PB7 - PWM CH6 IGBT dolny biały
+ADC1 PA0 - zadajnik prędkości potencjometr (tymczasowo jako regulacja prądu)
+ADC1 PA4 - zadajnik prędkości potencjometr (dodatkowy jako manetka throttle)
+ADC2 PA1 - pomiar prądu silnika
+EXTI0 PC0 - hall pomiar prędkości silnika
+PC4 PC5 - zadajnik prędkości enkoder
+USART TX - PA2
+USART RX - PA3
+PA5 - LED
+PC13 - button
+
+Zasoby v2:
+TIM1 6-step PWM
+TIM2 ogólny timer
+TIM3 enkoder prędkości silnika
+
+bez regulacji prędkości:
+- po podaniu standardowej sinusoidy 50Hz silnik kręci, pobiera "standardowy" prąd i występuje minimalny poślizg. Sinusoida jest "ładna".
+- przy zwiększaniu obciążenia poślizg i prąd rośnie próbując jakby naturalnie bez regulacji pokonać obciążenie. Sinusoida zniekształca się.
+
+regulacja prędkości (kontrola prędkości + kontrola prądu w tym suma prądów musi być zero (AVR32723)): 
+- zadajnik określa prędkość docelową a silnik ma możliwie szybko za nią podążać
+- regulacja prędkości PID płynnie zwiększa poślizg nie przekraczając granicy wymuszając większy prąd i prędkość
+- regulacja prądu PID płynnie zwiększa prąd do maksymalnego dopóki nie osiągnie prędkości zadanej
+- regulacja prądu PID utrzymuje prędkość próbując zmniejszać prąd w długich cyklach do wartości prądu podtrzymującego
+- regulacja prądu utrzymuje sumę prądów na zero dążąc do wartości prądu fazowego ustalonej regulatorem PID
+- prędkość mierzona w najmniejszych możliwych okresach czyli czas pomiędzy każdym zboczem z enkodera czyli enkoder 100 imp/s = 400 impulsów sprawdzane co 10us
+
+szczegóły korekcji prądu:
+- najmniejsza jednostka czasu to 10us a wypełnianie PWM było zmieniane co amount10us_per_idx (55 dla 50Hz, patrz params.h)
+- prąd będzie korygowany na bierząco do wartości zadanej w najmniejszych możliwych okresach czasu (12us czytanie ADC)
+- dla każdej jednostki 10us będzie obliczana wartość prądu zadanego (sin_pattern -> wart. ADC -> wart. dla danej jednostki 10us)
+- dla każdej jednostki 10us będzie mierzona wartość prądu osiągniętego
+- regulator PI obliczy ile należy skorygować (np. zadano sin_pattern[2]=45 -> dla 20 jednostki 10us=40 -> ADC zadane 100=100%, ADC zmierzono 50, PI=80=80% -> 80% z 40=32 jako korekta)
+
+
