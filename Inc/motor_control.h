@@ -15,11 +15,11 @@
 
 typedef struct
 {
-	TIM_HandleTypeDef *tim_encoder;
-	ADC_HandleTypeDef *adc_L1;
-	ADC_HandleTypeDef *adc_L2;
-	ADC_HandleTypeDef *adc_L3;
-	UART_HandleTypeDef *usart;
+    TIM_HandleTypeDef *tim_encoder;
+    ADC_HandleTypeDef *adc_L1;
+    ADC_HandleTypeDef *adc_L2;
+    ADC_HandleTypeDef *adc_L3;
+    UART_HandleTypeDef *usart;
 
 } MC_InitTypeDef;
 
@@ -29,12 +29,12 @@ MC_InitTypeDef mc_init;
 
 typedef struct
 {
-	MovAvrg_TypeDef mov_avrg;							//current measured with moving average operation, last 3 probes
-	AvrgCurr_TypeDef avrg_curr;							//current measurod from last 144 probes (whole periode)
-	int probes[SIN_PATTERN_SIZE];						//array with current measurements from whole period
+    MovAvrg_TypeDef mov_avrg;                            //current measured with moving average operation, last 3 probes
+    AvrgCurr_TypeDef avrg_curr;                          //current measurod from last 144 probes (whole periode)
+    int probes[SIN_PATTERN_SIZE];                        //array with current measurements from whole period
 
-	PI_TypeDef pi_ctrl;									//PI controller
-	int corrections[SIN_PATTERN_SIZE];					//array with corrections for current
+    PI_TypeDef pi_ctrl;                                  //PI controller
+    int corrections[SIN_PATTERN_SIZE];                   //array with corrections for current
 
 } Current_TypeDef;
 
@@ -42,12 +42,12 @@ typedef struct
 
 typedef struct
 {
-	uint32_t adc;
-	uint32_t last_value;
-	uint32_t new_value;
-	float freq;											//freq readed from throttle
-	float period;										//period calculated from freq
-	float freq_mech;									//mechanical freq of engine rotor consider electric pair of poles. 2 pair = 1 pair speed / 2
+    uint32_t adc;
+    uint32_t last_value;
+    uint32_t new_value;
+    float freq;                                          //freq readed from throttle
+    float period;                                        //period calculated from freq
+    float freq_mech;                                     //mechanical freq of engine rotor consider electric pair of poles. 2 pair = 1 pair speed / 2
 
 } Throttle_TypeDef;
 
@@ -55,20 +55,20 @@ typedef struct
 
 typedef struct
 {
-	uint32_t cnt;										//counting impulses
-	uint32_t dir;										//direction of rotation
-	float full_rotation_time;
-	float freq;											//freq of motor
-	float delay;										//poslizg silnika czyli roznica predkosci pola magnetycznego i fizycznego obrotu wirnika
+    uint32_t cnt;                                        //counting impulses
+    uint32_t dir;                                        //direction of rotation
+    float full_rotation_time;
+    float freq;                                          //freq of motor
+    float delay;                                         //poslizg silnika czyli roznica predkosci pola magnetycznego i fizycznego obrotu wirnika
 
 } Encoder_TypeDef;
 
 
 typedef struct
 {
-	float freq;											//electrical freq gived to motor
-	float period;										//electrical period of electrical freq
-	float freq_mech;									//mechanical freq of engine rotor consider electric pair of poles. 2 pair = 1 pair speed / 2
+    float freq;                                          //electrical freq gived to motor
+    float period;                                        //electrical period of electrical freq
+    float freq_mech;                                     //mechanical freq of engine rotor consider electric pair of poles. 2 pair = 1 pair speed / 2
 
 } Motor_TypeDef;
 
@@ -117,7 +117,7 @@ int get_potent_correction(void);
 float get_current_value(int adc_value);
 int is_begin_new_half_L1(void);
 int driving(void);
-uint32_t max_delay(void);								//test dynamicznego MAX_DELAY z potencjometru do testow dynamicznych z roznymi predkosciami
+uint32_t max_delay(void);                                //test dynamicznego MAX_DELAY z potencjometru do testow dynamicznych z roznymi predkosciami
 void usart_send_status(void);
 
 #endif /* MOTOR_CONTROL_H_ */

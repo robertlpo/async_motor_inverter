@@ -10,12 +10,12 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>												//abs() function
+#include <stdlib.h>                            //abs() function
 #include "params.h"
 
 
-#define MOV_AVRG_SIZE				8							//moving average sum of elements
-#define MOV_AVRG_FLOAT_SIZE			25
+#define MOV_AVRG_SIZE                8         //moving average sum of elements
+#define MOV_AVRG_FLOAT_SIZE          25
 
 
 /* moving average calculations */
@@ -23,13 +23,13 @@
 
 typedef struct
 {
-	int value;
+    int value;
 
-	/* private */
+    /* private */
 
-	int _values[MOV_AVRG_SIZE];
-	int _idx;
-	int _sum;
+    int _values[MOV_AVRG_SIZE];
+    int _idx;
+    int _sum;
 
 } MovAvrg_TypeDef;
 
@@ -39,13 +39,13 @@ typedef struct
 
 typedef struct
 {
-	float value;
+    float value;
 
-	/* private */
+    /* private */
 
-	float _values[MOV_AVRG_FLOAT_SIZE];
-	int _idx;
-	float _sum;
+    float _values[MOV_AVRG_FLOAT_SIZE];
+    int _idx;
+    float _sum;
 
 } MovAvrgFloat_TypeDef;
 
@@ -55,13 +55,13 @@ typedef struct
 
 typedef struct
 {
-	int value;
+    int value;
 
-	/* private */
+    /* private */
 
-	int _values[SIN_PATTERN_SIZE/2];
-	int _idx;
-	int _sum;
+    int _values[SIN_PATTERN_SIZE/2];
+    int _idx;
+    int _sum;
 
 } AvrgCurr_TypeDef;
 
@@ -71,21 +71,21 @@ typedef struct
 
 typedef struct
 {
-	float kp_up;
-	float ki_up;
-	float kp_down;
-	float ki_down;
+    float kp_up;
+    float ki_up;
+    float kp_down;
+    float ki_down;
 
-	/* private */
+    /* private */
 
-	float kp;
-	float ki;
-	int diff;
-	int diff_sum;
-	int p;
-	int i;
-	int value;
-	int last_target;
+    float kp;
+    float ki;
+    int diff;
+    int diff_sum;
+    int p;
+    int i;
+    int value;
+    int last_target;
 
 } PI_TypeDef;
 

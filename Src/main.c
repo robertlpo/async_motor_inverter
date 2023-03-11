@@ -122,7 +122,7 @@ int main(void)
 
   HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
 
-  HAL_ADC_Start_DMA(&hadc1, adc1_values, 2);			//potentiometers for test
+  HAL_ADC_Start_DMA(&hadc1, adc1_values, 2);            //potentiometers for test
   HAL_ADC_Start(&hadc2);
 
   mc_init.tim_encoder = &htim1;
@@ -156,7 +156,7 @@ int main(void)
   while (1)
   {
 
-	  motor_control_loop();
+      motor_control_loop();
 
   /* USER CODE END WHILE */
 

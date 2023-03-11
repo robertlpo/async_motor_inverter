@@ -21,4 +21,4 @@
 * Inc/params.h
 * Inc/peripherals.h
 * Src/main.c
-
+* info-skuter.txt
